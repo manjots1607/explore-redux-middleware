@@ -19,7 +19,7 @@ let counterReducer = function(state=0, action) {
 
   switch(action.type) {
     case INCREMENT_COUNTER:
-      return state + (action.payload || 1);
+      return state + (+action.payload || 1);
     default:
       return state;
   }
@@ -30,8 +30,17 @@ const rootReducer = combineReducers ({
   counter: counterReducer,
 });
 
+//Middleware
+const loggerMiddleware = (middlewareApi) => (next) => (action) => {
+  console.log("ACTION DISPATCHED: ", action);
+  const ret = next(action);
+  console.log("UPDATED STATE: ", middlewareApi.getState());
+
+  return ret;
+}
+
 //create the store
-let store = createStore(rootReducer);
+let store = createStore(rootReducer, applyMiddleware(loggerMiddleware));
 store.subscribe(render);
 
 function render() {
@@ -41,6 +50,10 @@ function render() {
 
 document.getElementById("counter-block").addEventListener("click", () => {
   store.dispatch(incrementCounter());
+})
+
+document.querySelector(".inc-btn").addEventListener("click", function(e) {
+  store.dispatch(incrementCounter(e.target.dataset.val));
 })
 
 render();
