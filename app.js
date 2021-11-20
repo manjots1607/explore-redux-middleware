@@ -33,7 +33,7 @@ const rootReducer = combineReducers ({
 //Middleware
 const someMiddleware = (middlewareApi) => (next) => (action) => {
   console.log("This is from middleware");
-  next(action);
+  return next(action);
 }
 
 //create the store
