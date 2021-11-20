@@ -2,6 +2,8 @@ const { applyMiddleware, createStore, combineReducers } = Redux;
 
 const INCREMENT_COUNTER = 'INCREMENT_COUNTER';
 
+// ACTION CREATORS
+
 // INCREMENT COUNTER
 let incrementCounter = function(val) { 
   //return an action
@@ -10,6 +12,7 @@ let incrementCounter = function(val) {
     payload: val
   }
 }
+
 
 //Our reducer
 let counterReducer = function(state=0, action) {
