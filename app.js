@@ -25,13 +25,26 @@ let counterReducer = function(state=0, action) {
   }
 }
 
+const presistedMiddleware = (middlewareApi) => (next) => (action) => {
+  const ret  = next(action);
+  const store = middlewareApi.getState();
+
+  if (store) {
+    localStorage.setItem("REDUX_STORE", JSON.stringify(store));
+  }
+
+  return ret;
+}
+
 //This is the final reducer that gets attached to our store.
 const rootReducer = combineReducers ({
   counter: counterReducer,
 });
 
+const initialState = JSON.parse(localStorage.getItem("REDUX_STORE") || `{}`);
+
 //create the store
-let store = createStore(rootReducer);
+let store = createStore(rootReducer, initialState, applyMiddleware(presistedMiddleware) );
 store.subscribe(render);
 
 function render() {
