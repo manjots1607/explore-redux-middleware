@@ -30,8 +30,14 @@ const rootReducer = combineReducers ({
   counter: counterReducer,
 });
 
+//Middleware
+const someMiddleware = (middlewareApi) => (next) => (action) => {
+  console.log("This is from middleware");
+  next(action);
+}
+
 //create the store
-let store = createStore(rootReducer);
+let store = createStore(rootReducer, applyMiddleware(someMiddleware));
 store.subscribe(render);
 
 function render() {
