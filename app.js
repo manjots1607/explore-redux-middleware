@@ -13,6 +13,14 @@ let incrementCounter = function(val) {
   }
 }
 
+const delayedIncrement = function(val) {
+  return function(dispatch, getState) {
+    // We can put sideeffect here....
+    setTimeout(() => {
+      dispatch(incrementCounter(val));
+    }, 1000);
+  }
+}
 
 //Our reducer
 let counterReducer = function(state=0, action) {
@@ -30,8 +38,23 @@ const rootReducer = combineReducers ({
   counter: counterReducer,
 });
 
+const logger = (middlewareApi) => (next) => (action) => {
+  console.log("ACTION DISPATCHED: ", action);
+  const ret = next(action);
+  console.log("NEW STATE: ", middlewareApi.getState());
+}
+
+// my own thunk
+const myThunk = (middlewareApi) => (next) => (action) => {
+  if (typeof action == "function" ) {
+    action(middlewareApi.dispatch, middlewareApi.getState);
+  } else {
+    return next(action);
+  }
+}
+
 //create the store
-let store = createStore(rootReducer);
+let store = createStore(rootReducer, applyMiddleware(logger, myThunk));
 store.subscribe(render);
 
 function render() {
@@ -41,6 +64,10 @@ function render() {
 
 document.getElementById("counter-block").addEventListener("click", () => {
   store.dispatch(incrementCounter());
+});
+
+document.querySelector(".inc-delay-btn").addEventListener("click", () => {
+  store.dispatch(delayedIncrement());
 })
 
 render();
